@@ -1,0 +1,19 @@
+name: Build dump dylib
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          xcrun -sdk iphoneos clang -arch arm64 -dynamiclib -fobjc-arc \
+            -miphoneos-version-min=14.0 -framework Foundation \
+            -o SpotifyDump.dylib dump.m
+          codesign -f -s - SpotifyDump.dylib
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SpotifyDump
+          path: SpotifyDump.dylib
